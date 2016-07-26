@@ -70,7 +70,10 @@ describe('postnet', function () {
             type: true
         }
         let printZipcode = buildPrintZipcode(recheckedZipcode);
-        let expected = "45056-1234";
+        let expected = {
+            zipcode: "45056-1234",
+            type: true
+        };
         expect(printZipcode).toEqual(expected);
     });
     it('parseBarcode', function () {
@@ -78,7 +81,10 @@ describe('postnet', function () {
         let barcodeString = "||:|:::|:|:|:::|:::||::||::|:|:|";
         let parsedBarcode = parseBarcode(barcodeString);
         //let expected = "45056-1234";
-        let expected = "95713";
+        let expected = {
+            zipcode: "95713",
+            type: true
+        };
         expect(parsedBarcode).toEqual(expected);
     })
     it('checkZipcode', function () {
@@ -143,13 +149,19 @@ describe('postnet', function () {
             type: true
         }
         let printBarcode = buildPrintBarcode(transformedZipcode);
-        let expected = "||:|:::|:|:|:::|:::||::||::|:|:|";
+        let expected = {
+            barcode: "||:|:::|:|:|:::|:::||::||::|:|:|",
+            type: true
+        };
         expect(printBarcode).toEqual(expected);
     });
     it('parseZipcode', function () {
         let barcodeString = "95713";
         let parsedZipcode = parseZipcode(barcodeString);
-        let expected = "||:|:::|:|:|:::|:::||::||::|:|:|";
+        let expected = {
+            barcode: "||:|:::|:|:|:::|:::||::||::|:|:|",
+            type: true
+        };
         expect(parsedZipcode).toEqual(expected);
     })
 });

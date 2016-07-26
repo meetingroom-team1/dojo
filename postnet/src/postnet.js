@@ -44,13 +44,13 @@ function matchDigital(barcodeArrays, allCodes) {
     let type = true;
     let zipcodeArray = barcodeArrays.map((barcodeArray)=> {
         let {zipcode} = allCodes.find((allcode) => allcode.barcode === barcodeArray);
-        if({zipcode} === undefined){
+        if ({zipcode} === undefined) {
             type = false;
-        }else {
+        } else {
             return zipcode
         }
     });
-    return{
+    return {
         zipcodeArray,
         type
     }
@@ -64,9 +64,9 @@ function transformBarcode(checkedBarcode) {
     let barcodeArrays = buildBarcodeArray(formattedBarcode);
     let allCodes = loadAllCodes();
     let matchedDigital = matchDigital(barcodeArrays, allCodes);
-    if(matchedDigital.type === true){
+    if (matchedDigital.type === true) {
         return matchedDigital
-    }else{
+    } else {
         return {type: false}
     }
 }
@@ -97,14 +97,17 @@ function buildPrintZipcode(recheckedZipcode) {
         let temp2 = printString.substr(5, 4);
         printString = temp1 + '-' + temp2;
     }
-    return printString
+    return {
+        zipcode: printString,
+        type: recheckedZipcode.type
+    }
 }
 function checkZipcode(barcodeString) {
     let length = barcodeString.length;
-    if(length === 10 || length === 9 || length === 5){
-        if(length === 10) {
+    if (length === 10 || length === 9 || length === 5) {
+        if (length === 10) {
             let hasHypken = barcodeString.includes('-') && barcodeString.indexOf('-') === barcodeString.lastIndexOf('-');
-            if(!hasHypken){
+            if (!hasHypken) {
                 return {type: false}
             }
         }
@@ -117,10 +120,10 @@ function checkZipcode(barcodeString) {
 }
 function formatZipcode(checkedZipcode) {
     let string = "";
-    if(checkedZipcode.zipcode.length === 10){
+    if (checkedZipcode.zipcode.length === 10) {
         let temps = checkedZipcode.zipcode.split('-');
         string = temps[0] + temps[1];
-    }else{
+    } else {
         string = checkedZipcode.zipcode;
     }
     return {zipcode: string}
@@ -137,44 +140,47 @@ function calculateCD(zipcodeArray) {
     for (let i = 0; i < zipcodeArray.length; i++) {
         sum += parseInt(zipcodeArray[i]);
     }
-    let CD = 10-(sum%10)+'';
+    let CD = 10 - (sum % 10) + '';
     zipcodeArray[zipcodeArray.length] = CD;
     return zipcodeArray
 }
-function matchString(zipcodeAndCDArrays,allCodes) {
+function matchString(zipcodeAndCDArrays, allCodes) {
     let type = true;
     let barcodeArray = zipcodeAndCDArrays.map((barcodeArray)=> {
         let {barcode} = allCodes.find((allcode) => allcode.zipcode === barcodeArray);
-        if({barcode} === undefined){
+        if ({barcode} === undefined) {
             type = false;
-        }else {
+        } else {
             return barcode
         }
     });
-    return{
+    return {
         barcodeArray,
         type
     }
 }
 function transformZipcode(checkedZipcode) {
-    if(checkedZipcode.type === false){
+    if (checkedZipcode.type === false) {
         return checkedZipcode
     }
     let formattedZipcode = formatZipcode(checkedZipcode);
     let zipcodeArray = buildZipcodeArray(formattedZipcode);
     let zipcodeAndCDArray = calculateCD(zipcodeArray);
     let allcodes = loadAllCodes();
-    let matchedString = matchString(zipcodeAndCDArray,allcodes);
-    if(matchedString.type === false){
-        return{type: false}
+    let matchedString = matchString(zipcodeAndCDArray, allcodes);
+    if (matchedString.type === false) {
+        return {type: false}
     }
     return matchedString
 }
-function buildPrintBarcode(transformedZipcode){
-    if(transformedZipcode.type === false){
+function buildPrintBarcode(transformedZipcode) {
+    if (transformedZipcode.type === false) {
         return "输入的邮编有误，请重新输入！"
     }
     let string = _.sum(transformedZipcode.barcodeArray);
-    let print = '|'+string+'|';
-    return print
+    let print = '|' + string + '|';
+    return {
+        barcode:print,
+        type: transformedZipcode.type
+    }
 }
